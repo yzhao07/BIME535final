@@ -1,0 +1,35 @@
+---
+title: "535_final_analysis"
+author: "Yujie Zhao"
+date: "2025-05-19"
+output: html_document
+---
+```{r}
+library(ggplot2)
+library(dplyr)
+data = read.csv("./ai-ml-enabled-devices-csv.csv")
+
+data <- data %>%
+  mutate(clinical_applications = case_when(
+    Primary.Product.Code %in% c("QAS", "QIH", "QJU") ~ "Diagnosis",
+    Primary.Product.Code %in% c("QKB", "QDQ") ~ "Treatment Planning",
+    Primary.Product.Code %in% c("QZW", "QYV") ~ "Monitoring",
+    TRUE ~ "Other"
+  ))
+
+data_count = data %>%count(data$Primary.Product.Code)
+write.csv(data_count,"./device_count.csv")
+# Plot
+p1= ggplot(data, aes(x = Panel..lead.)) +
+  geom_bar(fill = "skyblue", color = "black") +
+  labs(title = "Class Distribution",
+       x = "Class",
+       y = "Count") +xlab("")+ggtitle("")+
+  geom_text(stat = "count", aes(label = after_stat(count)), vjust = -0.5) +
+  theme(axis.text.x  = element_text(angle = 30, vjust = 0.6))+ theme( axis.text.x=element_text(size=12,colour="black"),axis.text.y=element_text(size=12,colour="black"),
+               plot.title = element_text(size=12,colour="black"),#legend.position = "none",
+               axis.text=element_text(size=12,colour="black"),text=element_text(size=12,colour="black"))
+p1
+ggsave(plot=p1, file="./panel.pdf",height=6,width=10)
+```
+
